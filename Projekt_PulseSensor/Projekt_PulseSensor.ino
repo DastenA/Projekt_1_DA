@@ -1,3 +1,10 @@
+/*
+ File: Projekt_Kombination
+ Author: Dasten Mohamad Amin
+ Date: 2023/12/13
+ */
+
+// List of define and include for the pulsesensor
 #define USE_ARDUINO_INTERRUPTS true
 #define sensor A0
 #define Highpulse 540
@@ -10,16 +17,20 @@
 
 Adafruit_SSD1306 srituhobby = Adafruit_SSD1306(128, 64, &Wire);
 
+// Define constants for pulsesensor
 const int OUTPUT_TYPE = SERIAL_PLOTTER;
 const int PULSE_INPUT = A0;
 const int PULSE_BLINK = LED_BUILTIN;
-const int PULSE_FADE = 5;
+const int PULSE_FADE = 5;    // OLED lamp blinks on pin5 with heartbeat
 const int THRESHOLD = 550;   // Adjust this number to avoid noise when idle
 const int PIN_SPEAKER = 9;    // speaker on pin9 makes a beep with heartbeat
 
+// Variables needed for creating pulse wavelength on OLED display
 int sX = 0;
 int sY = 60;
 int x = 0;
+
+// Variables needed for pulse wavelength data
 int Svalue;
 int value;
 long Stime = 0;
@@ -27,9 +38,11 @@ long Ltime = 0;
 int count = 0;
 int Bpm = 0;
 
+// Library needed for pulsesensor function
 PulseSensorPlayground pulseSensor;
 
 void setup() { {
+  
  Serial.begin(115200);
   pulseSensor.analogInput(PULSE_INPUT);
   pulseSensor.blinkOnPulse(PULSE_BLINK);
@@ -49,8 +62,6 @@ void setup() { {
     }
   }
 }
-
-  Serial.begin(115200);
   srituhobby.begin(SSD1306_SWITCHCAPVCC, 0x3C);// Address 0x3C for 128x32
   delay(1000);
   srituhobby.clearDisplay();
