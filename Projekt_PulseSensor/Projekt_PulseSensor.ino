@@ -1,6 +1,7 @@
 /*
- File: Projekt_Kombination
+ File: Projekt_PulseSensor
  Author: Dasten Mohamad Amin
+ Description: Pulsesensor that shows BPM through OLED display, speaker and OLED lamp
  Date: 2023/12/13
  */
 
@@ -42,7 +43,7 @@ int Bpm = 0;
 PulseSensorPlayground pulseSensor;
 
 void setup() { {
-  
+  // Starts Serial plotter or monitor with 115200 baud
  Serial.begin(115200);
   pulseSensor.analogInput(PULSE_INPUT);
   pulseSensor.blinkOnPulse(PULSE_BLINK);
@@ -51,9 +52,11 @@ void setup() { {
   pulseSensor.setSerial(Serial);
   pulseSensor.setOutputType(OUTPUT_TYPE);
   pulseSensor.setThreshold(THRESHOLD);
-  
+
+// Checks if pulsesensor is working
   if (!pulseSensor.begin()) {
 
+// Changes lighting of OLED lamp if it fails
     for(;;) {
       digitalWrite(PULSE_BLINK, LOW);
       delay(50);
@@ -62,18 +65,23 @@ void setup() { {
     }
   }
 }
+// Starts the OLED screen
   srituhobby.begin(SSD1306_SWITCHCAPVCC, 0x3C);// Address 0x3C for 128x32
   delay(1000);
+// Clears the OLED screen
   srituhobby.clearDisplay();
 }
 
 void loop() {
+  // Creates value for the sensor
   Svalue = analogRead(sensor);
   Serial.println(Svalue);
+  // Maps the serial value
   value = map(Svalue, 0, 1024, 0, 45);
 
   int y = 60 - value;
 
+ // Restarts OLED wavelength once it reaches the end of screen
   if (x > 128) {
     x = 0;
     sX = 0;
@@ -85,6 +93,7 @@ void loop() {
   sY = y;
   x ++;
 
+  // Displays BPM on OLED screen
   BPM();
 
   srituhobby.setCursor(0, 0);
@@ -101,6 +110,7 @@ void BPM() {
     Stime = millis() - Ltime;
     count++;
 
+    // Shows the BPM on OLED display after a minute has passed
     if (Stime / 1000 >= 60) {
       Ltime = millis();
       Serial.println(count);
@@ -114,14 +124,17 @@ void BPM() {
     }
   }
 
+  // Delays pulsesensor
   delay(20);
   pulseSensor.outputSample();
 
+  // If heartbeat is detected produces tone through speaker
   if (pulseSensor.sawStartOfBeat()) {
     pulseSensor.outputBeat();
     tone(PIN_SPEAKER,932);    // tone(pin,frequency)
   }
 
+  // If no heartbeat is detected stops tone
   if(pulseSensor.isInsideBeat() == false){
     noTone(PIN_SPEAKER);
   }
